@@ -6134,6 +6134,22 @@ dyesub_print_plane(stp_vars_t *v,
   return ret;
 }
 
+
+//big ednian check;
+int IsBigEndian()
+{
+ union temp
+ {
+  short int a;
+  char b;
+ } temp;
+ temp.a = 0x1234;
+ if( temp.b == 0x12 )
+  return 0;
+ else
+  return -1;
+}
+
 /*
  * dyesub_print()
  */
@@ -6273,13 +6289,10 @@ dyesub_do_print(stp_vars_t *v, stp_image_t *image)
   }
 
   if (pv.bytes_per_ink_channel > 1) {
-#if defined(__LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN__)
+if(IsBigEndian == -1)
     pv.byteswap = dyesub_feature(caps, DYESUB_FEATURE_BIGENDIAN);
-#elif defined (__BIG_ENDIAN) || defined(__BIG_ENDIAN__)
+else //if(IsBigEndian == 0 )
     pv.byteswap = !dyesub_feature(caps, DYESUB_FEATURE_BIGENDIAN);
-#else
-#error "Unable to determine endianness, aborting compilation!"
-#endif    
   }
 
   pv.image_data = dyesub_read_image(v, &pv, image);
